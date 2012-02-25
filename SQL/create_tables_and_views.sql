@@ -96,7 +96,7 @@ CREATE TABLE IF NOT EXISTS `districtdb_jobs` (
 
 CREATE VIEW `districtdb_orgs_view` AS SELECT * FROM `districtdb_orgs`;
 
-CREATE OR REPLACE VIEW `districtdb_org_jobs_view` AS SELECT 
+CREATE VIEW `districtdb_org_jobs_view` AS SELECT 
   `districtdb_orgs`.`OrgID`*1000+`districtdb_jobs`.`JobID` AS `OJID`,
   `districtdb_orgs`.`OrgID` AS `OrgID`,
   `districtdb_orgs`.`OrgType` AS `OrgType`,
