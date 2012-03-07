@@ -23,8 +23,8 @@ jimport('joomla.application.component.helper');
 
 // -----------------  Edit these config variables to match your setup.
 
-// This var is the Label that you defined for the table that the user registers with.
-$userProfileTableLabel = "People";
+// This var is the Fabrik form ID that corresponds to the "My Profile" form.
+$userProfileFormID = 1;
 // This is the name of the db table that is for people.
 $tableName = 'districtdb_persons';
 // This is the name of the 'newsletter' field in the above db table.
@@ -62,7 +62,7 @@ if ($acyinstalled) {
     // Does the user already have an Acymailing profile?
     $whereclause = " WHERE LOWER(`email`)=LOWER('".$emailval."')";
     $dbo = &JFactory::getDBO();
-    $dbo->setQuery("SELECT `subid`,`confirmed`,`enabled`,`accept` FROM `#__acymailing_subscriber` ".$whereclause);
+    $dbo->setQuery("SELECT `subid`,`confirmed`,`enabled`,`accept`,`name` FROM `#__acymailing_subscriber` ".$whereclause);
     $acyinfo = $dbo->loadRow();
     $acystatus = "";
     if ($acyinfo) {
@@ -74,7 +74,7 @@ if ($acyinstalled) {
     // Are we on the "Profile" form or the "People" form.
     // This tells us if we have the user editing their own info or a 
     // staffer working on the person's info.
-    if ($userProfileTableLabel == $formModel->getLabel()) {
+    if ($userProfileFormID == $formModel->getId()) {
         $userProfile = true;
     } else {
         $userProfile = false;
@@ -86,6 +86,11 @@ if ($acyinstalled) {
     if (is_array($newsval)) {
         $newsval = $newsval[0];
     }
+    if ($newsval == "Yes") {
+        $newsval = true;
+    } else {
+        $newsval = false;
+    }
     
     // Now get down to business
     if ($userProfile) {
@@ -94,7 +99,7 @@ if ($acyinstalled) {
             // User is not already in the Acy system.
             if (!$newsval) {
                 // User does not want the Newsletter
-                $acynewvals = "0,1,1";
+                $acynewvals = "1,1,1";
                 $acynewstat = "-1";
             } else {
                 // Use does want the Newsletter
@@ -133,7 +138,7 @@ if ($acyinstalled) {
             // User is not already in the Acy system.
             if (!$newsval) {
                 // User does not want the Newsletter
-                $acynewvals = "0,1,1";
+                $acynewvals = "1,1,1";
                 $acynewstat = "-1";
             } else {
                 // Use does want the Newsletter
@@ -166,13 +171,20 @@ if ($acyinstalled) {
         }
     }
                  
-
     // Now wrap up by updating the Acymailing info
     // Prep the data array
     $acynewvalsarray = split(',', $acynewvals);
     // "Dates" in Acymailing
     $now = time();
     // Update Acymailing subscriber info
+    // First a special test if the name has changed - if so then update this no matter what else.
+    if ($acyinfo && ($nameval != $acyinfo[4])) {
+        $setclause = " SET `name`='".$nameval."'";
+	$whereclause = " WHERE `subid`=".$acyinfo[0];
+	$dbo->setQuery("UPDATE `#__acymailing_subscriber` ".$setclause.$whereclause);
+	$dbo->query();
+    }
+    // Now continue with the newsletter specific updates.
     if ($acynewvals) {
         $setclause = " SET `confirmed`=".$acynewvalsarray[0].", `enabled`=".$acynewvalsarray[1].", `accept`=".$acynewvalsarray[2];
         $setclause .= ", `email`='".$emailval."', `userid`=".$useridval.", `name`='".$nameval."', `html`=1";
