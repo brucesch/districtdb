@@ -23,11 +23,11 @@ CREATE TABLE IF NOT EXISTS `districtdb_orgs` (
   Zip varchar(10) NOT NULL default '',
   Longitude decimal(16,14) NOT NULL default 0.0,
   Latitude decimal(16,14) NOT NULL default 0.0,
-  OnlineAdvUnitID varchar(50) NOT NULL default '',
+  Coords varchar(50) NOT NULL default '',
   OnlineAdvUnitNum varchar(50) NOT NULL default '',
   GoodTurnAmUnitID varchar(50) NOT NULL default '',
   GoodTurnAmUnitNum varchar(50) NOT NULL default '',
-  active tinyint(4) NOT NULL default 1,
+  active enum('No','Yes') NOT NULL default 'Yes',
   inactivedate date NOT NULL default '0000-00-00',
   PRIMARY KEY  (OrgID),
   UNIQUE KEY id (OrgID)
@@ -60,14 +60,14 @@ CREATE TABLE IF NOT EXISTS `districtdb_persons` (
   eaglescout enum('Yes','No','Unknown') NOT NULL default 'Unknown',
   eagledate varchar(50) NOT NULL default '',
   passkey varchar(200) NOT NULL default '',
-  confirmed tinyint(4) NOT NULL default 0,
-  req_newemail tinyint(4) default 0,
-  req_sendchange tinyint(4) default 0,
+  confirmed enum('No','Yes') NOT NULL default 'Yes',
+  req_newemail enum('No','Yes') NOT NULL default 'No',
+  req_sendchange enum('No','Yes') NOT NULL default 'No',
   req_date datetime NOT NULL default '0000-00-00 00:00:00',
   last_update timestamp(14),
-  newsletter tinyint(4) NOT NULL default 1,
-  nomail tinyint(4) NOT NULL default 1,
-  active tinyint(4) NOT NULL default 1,
+  newsletter enum('No','Yes') NOT NULL default 'Yes',
+  nomail enum('No','Yes') NOT NULL default 'No',
+  active enum('No','Yes') NOT NULL default 'Yes',
   PRIMARY KEY (PersonID),
   UNIQUE KEY id (PersonID)
  ) TYPE=MyISAM;
@@ -77,7 +77,7 @@ CREATE TABLE IF NOT EXISTS `districtdb_service` (
   personid int(10) unsigned default 0,
   orgid int(10) unsigned default 0,
   jobid int(10) unsigned default 0,
-  active tinyint(4) NOT NULL default 1,
+  active enum('No','Yes') NOT NULL default 'Yes',
   activedate date NOT NULL default '0000-00-00',
   inactivedate date NOT NULL default '0000-00-00',
   PRIMARY KEY (ServiceID),
@@ -89,11 +89,13 @@ CREATE TABLE IF NOT EXISTS `districtdb_jobs` (
   Title varchar(255) NOT NULL default '',
   Description varchar(255) NOT NULL default '',
   jobtype enum('Pack','Troop','Crew','Ship','Post','Varsity','District','Council','CharterOrg','Company','Other') NOT NULL default 'Other',
-  singlepositionrole tinyint(4) default 0,
+  singlepositionrole enum('No','Yes') NOT NULL default 'Yes',
   PRIMARY KEY  (JobID),
   UNIQUE KEY id (JobID)
  ) TYPE=MyISAM;
 
+                           
+                        
 CREATE VIEW `districtdb_orgs_view` AS SELECT * FROM `districtdb_orgs`;
 
 CREATE VIEW `districtdb_org_jobs_view` AS SELECT 
@@ -104,4 +106,25 @@ CREATE VIEW `districtdb_org_jobs_view` AS SELECT
   `districtdb_jobs`.`Description` AS `Description`
   FROM `districtdb_orgs`
   LEFT JOIN `districtdb_jobs` ON `districtdb_orgs`.`OrgType` = `districtdb_jobs`.`jobtype`;
+
+CREATE VIEW `districtdb_units_view` AS SELECT 
+  `districtdb_orgs`.`OrgID` AS `OrgID`,
+  `districtdb_orgs`.`OrgType` AS `OrgType`,
+  `districtdb_orgs`.`OrgNumber` AS `OrgNumber`,
+  `districtdb_orgs`.`Location` AS `Location`,
+  `districtdb_orgs`.`Website` AS `Website`,
+  IF(`districtdb_orgs`.`GetInfoFromCharterOrg`='No',`districtdb_orgs`.`Phone`,`COs`.`Phone`) AS `Phone`,
+  IF(`districtdb_orgs`.`GetInfoFromCharterOrg`='No',`districtdb_orgs`.`Address`,`COs`.`Address`) AS `Address`,
+  IF(`districtdb_orgs`.`GetInfoFromCharterOrg`='No',`districtdb_orgs`.`City`,`COs`.`City`) AS `City`,
+  IF(`districtdb_orgs`.`GetInfoFromCharterOrg`='No',`districtdb_orgs`.`State`,`COs`.`State`) AS `State`,
+  IF(`districtdb_orgs`.`GetInfoFromCharterOrg`='No',`districtdb_orgs`.`Zip`,`COs`.`Zip`) AS `Zip`,
+  IF(`districtdb_orgs`.`GetInfoFromCharterOrg`='No',`districtdb_orgs`.`Coords`,`COs`.`Coords`) AS `Coords`,
+  `COs`.`CharterOrgType` AS `CharterOrgType`,
+  `COs`.`OrgName` AS `OrgName`,
+  `COs`.`Website` AS `COWebsite`
+  FROM `districtdb_orgs`
+  INNER JOIN `districtdb_orgs` AS `COs` ON `districtdb_orgs`.`CharterOrgID` = `COs`.`OrgID`
+  WHERE `districtdb_orgs`.`OrgType` IN ('Pack','Troop','Crew','Ship','Post','Varsity') AND
+        `districtdb_orgs`.`active` = 'Yes' AND
+         `COs`.`active`= 'Yes';
 

@@ -42,7 +42,6 @@ $VERSION = "1.0";
     '%ALVLFRIEND%'  =>  10,
     '%ALVLNOBODY%'  =>  54,
     '%ALVLSUPERVISOR%'  =>  12,
-    '%ALVLDISTADMIN%'  =>  0,
     '%ARCHIVEEMAIL%'  =>  2,
     '%BOUNCEEMAIL%'  =>  2,
     '%DBPREFIX%'  =>  86,
@@ -135,14 +134,14 @@ if (defined($opt_p)) {
 	if (/^LOCK TABLES `(.*)`/) {
 	    # Trim the database table prefix
 	    ($table = $1) =~ s/^[^_]*_//;
-	    print STDOUT "table: $table\n";
+	    # print STDOUT "table: $table\n";
 	    $record = 1;
 	}
 	# Record tracker - also for heuristics if needed
         if (/^\(([^,]*),/) {
 	    $record = $1;
 	    if ($table eq 'fabrik_lists') {
-		print STDOUT "record: $record\n";
+		# print STDOUT "record: $record\n";
 	    }
 	}
 
@@ -165,8 +164,8 @@ if (defined($opt_p)) {
             if (/^\(((?:[^,]+,){18})([^,]+),/) {
 		$viewlistaccess = $2;
 		if (exists($ALEVEL{"$viewlistaccess"})) {
-		    print STDOUT "list: $table  found access: " . $ALEVEL{"$viewlistaccess"} . "\n";
-		    print STDOUT "  all:   $1\n";
+		    # print STDOUT "list: $table  found access: " . $ALEVEL{"$viewlistaccess"} . "\n";
+		    # print STDOUT "  all:   $1\n";
 		    $newval = "(" . $1 . $ALEVEL{"$viewlistaccess"} . ",";
 		    $CNT{$ALEVEL{"$viewlistaccess"}} += s/^\(((?:[^,]+,){18})([^,]+),/$newval/e;
 		} else {
