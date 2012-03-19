@@ -49,7 +49,12 @@ if ((strpos($nameval, ',') === false) && (count($names) == 2)) {
   $fullcontact = new FullContactAPI($fcapikey);
   $nameinfo = $fullcontact->doNameLookup($nameval);
   if (is_array($nameinfo) && ($nameinfo['status'] == 200)) {
-    $formModel->updateFormData($tableName.'___'.$firstnamefld, $nameinfo['nameDetails']['givenName'], true);
+    // Jam the first name and any middle names together
+    $frstname = $nameinfo['nameDetails']['givenName'];
+    foreach ($nameinfo['nameDetails']['middleNames'] as $mdlname) {
+      $frstname .= " " . $mdlname;
+    }
+    $formModel->updateFormData($tableName.'___'.$firstnamefld, $frstname, true);
     $formModel->updateFormData($tableName.'___'.$lastnamefld, $nameinfo['nameDetails']['familyName'], true);
   } else {
     // Yikes - cannot figure out name - smash the whole name into the lastname field
