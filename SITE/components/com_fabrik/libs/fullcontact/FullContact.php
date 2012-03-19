@@ -10,6 +10,10 @@ defined('_JEXEC') or die();
 define ("BASE_URL", "https://api.fullcontact.com/");
 define ("API_VERSION", "v2");
 
+// Select what will work at the host
+// STREAM or CURL
+define ("FC_METHOD", "CURL");
+
 class FullContactAPI {
     
     private $_apiKey = null;
@@ -80,6 +84,9 @@ class FullContactAPI {
      *********************************/
     function restHelper($json_endpoint) {
         
+
+      switch (FC_METHOD) {
+      case "STREAM":
         $return_value = null;
         
         $http_params = array(
@@ -142,7 +149,57 @@ class FullContactAPI {
             throw new Exception("$verb $json_endpoint failed");
         }//end outer else
         
-        return $return_value;
+	break;
+
+      case "CURL":
+
+	$ch = curl_init();
+
+	// set url
+	curl_setopt($ch, CURLOPT_URL, $json_endpoint);
+	
+	//return the transfer as a string
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	
+	// $output contains the output string
+	$output = curl_exec($ch);
+	$headers = curl_getinfo($ch);
+	
+	// close curl resource to free up system resources
+	curl_close($ch);
+
+	$return_value = array();
+
+	if ($output !== false) {
+
+	  //We're receiving stream data back from the API, json decode it here.                
+	  $outputarr = json_decode($output, true);
+
+	  // check return
+	  if ($outputarr['status'] != 200) {
+	    $return_value['http_header_error_message'] = $outputarr['status'];
+	    $return_value['error_message'] = $outputarr['message'];
+	    $return_value['is_error'] = true;
+	  } else {
+	    $return_value = $outputarr;
+	    $return_value['is_error'] = false;
+	  }
+
+        // curl_exec failed
+        } else {
+            throw new Exception("curl_exec $json_endpoint failed");
+        }//end outer else
+
+	break;
+ 	
+      } // close switch
+
+      $return_value['fc_method'] = FC_METHOD;
+
+
+      return $return_value;
+
+
     }//end restHelper
 }//end FullContactAPI
 ?>
