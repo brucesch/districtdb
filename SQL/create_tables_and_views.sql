@@ -6,7 +6,7 @@
 
 CREATE TABLE IF NOT EXISTS `districtdb_orgs` (
   OrgID int(10) unsigned NOT NULL auto_increment,
-  OrgType enum('Pack','Troop','Crew','Ship','Post','Varsity','District','Council','CharterOrg','Company','Other') NOT NULL default 'Pack',
+  OrgType enum('Pack','Troop','Crew','Ship','Post','Varsity','District','Council','CharterOrg','Community','Company','Other') NOT NULL default 'Pack',
   CharterOrgType enum('None','School','Church','Other') NOT NULL default 'None',
   OrgNumber int(10) unsigned NOT NULL default 0,
   OrgName varchar(255) NOT NULL default '',
@@ -37,6 +37,8 @@ CREATE TABLE IF NOT EXISTS `districtdb_persons` (
   PersonID int(10) unsigned NOT NULL auto_increment,
   userid int(10) unsigned default 0,
   name varchar(255) NOT NULL default '',
+  firstname varchar(255) NOT NULL default '',
+  lastname varchar(255) NOT NULL default '',
   username varchar(150) NOT NULL default '',
   password varchar(100) NOT NULL default '',
   address1 varchar(255) NOT NULL default '',
@@ -68,6 +70,7 @@ CREATE TABLE IF NOT EXISTS `districtdb_persons` (
   newsletter enum('No','Yes') NOT NULL default 'Yes',
   nomail enum('No','Yes') NOT NULL default 'No',
   active enum('No','Yes') NOT NULL default 'Yes',
+  captcha varchar(50) NOT NULL default '',
   PRIMARY KEY (PersonID),
   UNIQUE KEY id (PersonID)
  ) TYPE=MyISAM;
@@ -88,7 +91,7 @@ CREATE TABLE IF NOT EXISTS `districtdb_jobs` (
   JobID int(10) unsigned NOT NULL auto_increment,
   Title varchar(255) NOT NULL default '',
   Description varchar(255) NOT NULL default '',
-  jobtype enum('Pack','Troop','Crew','Ship','Post','Varsity','District','Council','CharterOrg','Company','Other') NOT NULL default 'Other',
+  jobtype enum('Pack','Troop','Crew','Ship','Post','Varsity','District','Council','CharterOrg','Community','Company','Other') NOT NULL default 'Other',
   singlepositionrole enum('No','Yes') NOT NULL default 'Yes',
   PRIMARY KEY  (JobID),
   UNIQUE KEY id (JobID)

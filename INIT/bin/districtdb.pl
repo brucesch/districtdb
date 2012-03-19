@@ -25,7 +25,7 @@ use File::Find;
 # --------------------------  Constants
 
 # Bump this as this program undergoes major revs.
-$VERSION = "1.0";
+$VERSION = "1.1";
 
 # Used in the tokenizer to map current ACCESS LEVELs
 %ALEVEL = (
@@ -39,8 +39,8 @@ $VERSION = "1.0";
 # Sanity checking for re-tokeinzing purposes
 %CHKCNT = (
     '%ALVLCOMMITTEE%'  =>  23,
-    '%ALVLFRIEND%'  =>  10,
-    '%ALVLNOBODY%'  =>  54,
+    '%ALVLFRIEND%'  =>  13,
+    '%ALVLNOBODY%'  =>  59,
     '%ALVLSUPERVISOR%'  =>  12,
     '%ARCHIVEEMAIL%'  =>  2,
     '%BOUNCEEMAIL%'  =>  2,
@@ -169,7 +169,7 @@ if (defined($opt_p)) {
 		    $newval = "(" . $1 . $ALEVEL{"$viewlistaccess"} . ",";
 		    $CNT{$ALEVEL{"$viewlistaccess"}} += s/^\(((?:[^,]+,){18})([^,]+),/$newval/e;
 		} else {
-		    print STDOUT "list: $table  not found access: $viewlistaccess\n";
+		    print STDOUT "WARNING: list: $table  not found access: $viewlistaccess\n";
 		}
 	    }
 	    # Phew - the rest of the List Access Levels are pretty easy
@@ -327,7 +327,7 @@ sub SanityCheck {
 
     # Final msg
     if ($ok) {
-	print STDOUT "\nCongratulations! All appears to be OK.\n";
+	print STDOUT "\nCongratulations! All appears to be OK.\n(Warnings about 'not found access' for 1 or 2 is OK.)\n";
     } else {
 	print STDOUT "\nOops! You should check the errors above.\n";
     }

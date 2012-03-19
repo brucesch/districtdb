@@ -1,2 +1,8 @@
 Everything that is located in this directory is going to end up in
 your site.
+
+-- pkg_fabrik_git_districtdb_2012_03_12_21_22_40.zip
+This has v1.0.0 plus the fix for plugin/element/display missing 'hidden'.
+This was causing edits of My Service to zero out 'orgid' and 'jobid'.
+
+
