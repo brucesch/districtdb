@@ -109,7 +109,6 @@ echo "$form->error</div>";?>
 // Look for 'captcha' in elements. If there then copy it and remove it.
 // Process like usual then append the 'captcha' at the end.
 			$this->elements = $group->elements;
-file_put_contents('/tmp/myphpfabrik.log', "\n\ndefault template elements: ". print_r($this->elements, true), FILE_APPEND);
                         $captchaelemobj = new stdClass();
                         if (array_key_exists('captcha', $this->elements)) {
                             $captchaelemobj = $this->elements['captcha'];

@@ -55,7 +55,12 @@ if ((strpos($nameval, ',') === false) && (count($names) == 2)) {
       $frstname .= " " . $mdlname;
     }
     $formModel->updateFormData($tableName.'___'.$firstnamefld, $frstname, true);
-    $formModel->updateFormData($tableName.'___'.$lastnamefld, $nameinfo['nameDetails']['familyName'], true);
+    // Jam the last name with any suffixes
+    $lstname = $nameinfo['nameDetails']['familyName'];
+    foreach ($nameinfo['nameDetails']['suffixes'] as $suffix) {
+      $lstname .= " " . $suffix;
+    }
+    $formModel->updateFormData($tableName.'___'.$lastnamefld, $lstname, true);
   } else {
     // Yikes - cannot figure out name - smash the whole name into the lastname field
     $formModel->updateFormData($tableName.'___'.$firstnamefld, '', true);

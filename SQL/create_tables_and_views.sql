@@ -4,7 +4,8 @@
 -- See https://github.com/brucesch/districtdb/wiki
 --
 
-CREATE TABLE IF NOT EXISTS `districtdb_orgs` (
+DROP TABLE IF EXISTS `districtdb_orgs`;
+CREATE TABLE `districtdb_orgs` (
   OrgID int(10) unsigned NOT NULL auto_increment,
   OrgType enum('Pack','Troop','Crew','Ship','Post','Varsity','District','Council','CharterOrg','Community','Company','Other') NOT NULL default 'Pack',
   CharterOrgType enum('None','School','Church','Other') NOT NULL default 'None',
@@ -33,7 +34,8 @@ CREATE TABLE IF NOT EXISTS `districtdb_orgs` (
   UNIQUE KEY id (OrgID)
  ) TYPE=MyISAM;
 
-CREATE TABLE IF NOT EXISTS `districtdb_persons` (
+DROP TABLE IF EXISTS `districtdb_persons`;
+CREATE TABLE `districtdb_persons` (
   PersonID int(10) unsigned NOT NULL auto_increment,
   userid int(10) unsigned default 0,
   name varchar(255) NOT NULL default '',
@@ -75,7 +77,8 @@ CREATE TABLE IF NOT EXISTS `districtdb_persons` (
   UNIQUE KEY id (PersonID)
  ) TYPE=MyISAM;
 
-CREATE TABLE IF NOT EXISTS `districtdb_service` (
+DROP TABLE IF EXISTS `districtdb_service`;
+CREATE TABLE `districtdb_service` (
   ServiceID int(10) unsigned NOT NULL auto_increment,
   personid int(10) unsigned default 0,
   orgid int(10) unsigned default 0,
@@ -87,7 +90,8 @@ CREATE TABLE IF NOT EXISTS `districtdb_service` (
   UNIQUE KEY id (ServiceID)
  ) TYPE=MyISAM;
 
-CREATE TABLE IF NOT EXISTS `districtdb_jobs` (
+DROP TABLE IF EXISTS `districtdb_jobs`;
+CREATE TABLE `districtdb_jobs` (
   JobID int(10) unsigned NOT NULL auto_increment,
   Title varchar(255) NOT NULL default '',
   Description varchar(255) NOT NULL default '',
@@ -98,9 +102,10 @@ CREATE TABLE IF NOT EXISTS `districtdb_jobs` (
  ) TYPE=MyISAM;
 
                            
-                        
+DROP VIEW IF EXISTS `districtdb_orgs_view`;
 CREATE VIEW `districtdb_orgs_view` AS SELECT * FROM `districtdb_orgs`;
 
+DROP VIEW IF EXISTS `districtdb_org_jobs_view`;
 CREATE VIEW `districtdb_org_jobs_view` AS SELECT 
   `districtdb_orgs`.`OrgID`*1000+`districtdb_jobs`.`JobID` AS `OJID`,
   `districtdb_orgs`.`OrgID` AS `OrgID`,
@@ -110,6 +115,7 @@ CREATE VIEW `districtdb_org_jobs_view` AS SELECT
   FROM `districtdb_orgs`
   LEFT JOIN `districtdb_jobs` ON `districtdb_orgs`.`OrgType` = `districtdb_jobs`.`jobtype`;
 
+DROP VIEW IF EXISTS `districtdb_units_view`;
 CREATE VIEW `districtdb_units_view` AS SELECT 
   `districtdb_orgs`.`OrgID` AS `OrgID`,
   `districtdb_orgs`.`OrgType` AS `OrgType`,

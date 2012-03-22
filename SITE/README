@@ -5,4 +5,7 @@ your site.
 This has v1.0.0 plus the fix for plugin/element/display missing 'hidden'.
 This was causing edits of My Service to zero out 'orgid' and 'jobid'.
 
+-- pkg_fabrik_git_districtdb_2012_03_21_08_31_57.zip
+This is the v.1.1.2 - Pass 2 @ Waterloo.
+
 

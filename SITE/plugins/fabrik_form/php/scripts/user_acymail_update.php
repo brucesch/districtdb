@@ -23,8 +23,8 @@ jimport('joomla.application.component.helper');
 
 // -----------------  Edit these config variables to match your setup.
 
-// This var is the Fabrik form ID that corresponds to the "My Profile" form.
-$userProfileFormID = 1;
+// This array var has the Fabrik form ID's that corresponds to the "My Profile" and "New Profile" forms.
+$userProfileFormID = array(1, 16);
 // This is the name of the db table that is for people.
 $tableName = 'districtdb_persons';
 // This is the name of the 'newsletter' field in the above db table.
@@ -71,10 +71,10 @@ if ($acyinstalled) {
         $acystatus = $dbo->loadResult();
     }
     
-    // Are we on the "Profile" form or the "People" form.
+    // Are we on the "My Profile" or "New Profile" form?
     // This tells us if we have the user editing their own info or a 
     // staffer working on the person's info.
-    if ($userProfileFormID == $formModel->getId()) {
+    if (in_array($formModel->getId(), $userProfileFormID)) {
         $userProfile = true;
     } else {
         $userProfile = false;
