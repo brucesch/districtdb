@@ -8,4 +8,7 @@ This was causing edits of My Service to zero out 'orgid' and 'jobid'.
 -- pkg_fabrik_git_districtdb_2012_03_21_08_31_57.zip
 This is the v.1.1.2 - Pass 2 @ Waterloo.
 
+-- pkg_fabrik_git_districtdb_2012_03_23_17_54_19.zip
+Added form plugin 'logs' to all forms for auditing. (#10)
+
 
