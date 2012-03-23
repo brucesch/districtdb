@@ -44,7 +44,7 @@ $VERSION = "1.1";
     '%ALVLSUPERVISOR%'  =>  12,
     '%ARCHIVEEMAIL%'  =>  2,
     '%BOUNCEEMAIL%'  =>  2,
-    '%DBPREFIX%'  =>  86,
+    '%DBPREFIX%'  =>  79,
     '%DEFAULTLATITUDE%'  =>  5,
     '%DEFAULTLONGITUDE%'  =>  5,
     );
