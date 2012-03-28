@@ -25,7 +25,7 @@ use File::Find;
 # --------------------------  Constants
 
 # Bump this as this program undergoes major revs.
-$VERSION = "1.1";
+$VERSION = "2.0";
 
 # Used in the tokenizer to map current ACCESS LEVELs
 %ALEVEL = (
@@ -47,6 +47,7 @@ $VERSION = "1.1";
     '%DBPREFIX%'  =>  79,
     '%DEFAULTLATITUDE%'  =>  5,
     '%DEFAULTLONGITUDE%'  =>  5,
+    '%NEWSLETTERID%'  =>  1,
     );
 
 # --------------------------  End Constants
@@ -75,7 +76,7 @@ if ((defined($opt_p) && defined($opt_g)) || (!defined($opt_p) && !defined($opt_g
     exit;
 }
 if (defined($opt_g) && !defined($opt_c)) {
-    print STDERR "# ERROR: your requested -g, generate, but are missing config file (-c)\n";
+    print STDERR "# ERROR: you requested -g, generate, but are missing config file (-c)\n";
     exit;
 }
 if (!defined($opt_o)) {
@@ -147,7 +148,7 @@ if (defined($opt_p)) {
 
 	# Now start tokenizing
 
-        # email addresses - used in the Email function (Perons and Service)
+        # email addresses - used in the Email function (Persons and Service)
         $CNT{'%BOUNCEEMAIL%'} += s/bounce\@dadhead\.schurmann\.org/%BOUNCEEMAIL%/g;
         $CNT{'%ARCHIVEEMAIL%'} += s/archive\@schurmann\.org/%ARCHIVEEMAIL%/g;
 
@@ -234,6 +235,9 @@ if (defined($opt_p)) {
 
 	# Joomla db prefix
 	$CNT{'%DBPREFIX%'} += s/mrn7l/%DBPREFIX%/g;
+
+        # Newsletter
+        $CNT{'%NEWSLETTERID%'} += s/`#__acymailing_listsub`.`listid`=2 AND/`#__acymailing_listsub`.`listid`=%NEWSLETTERID% AND/g;
 
 	# Chunk line
 	print SQLOUT "$_\n";
