@@ -25,7 +25,7 @@ use File::Find;
 # --------------------------  Constants
 
 # Bump this as this program undergoes major revs.
-$VERSION = "2.0";
+$VERSION = "2.1";
 
 # Used in the tokenizer to map current ACCESS LEVELs
 %ALEVEL = (
@@ -40,8 +40,9 @@ $VERSION = "2.0";
 %CHKCNT = (
     '%ALVLCOMMITTEE%'  =>  23,
     '%ALVLFRIEND%'  =>  13,
-    '%ALVLNOBODY%'  =>  59,
+    '%ALVLNOBODY%'  =>  60,
     '%ALVLSUPERVISOR%'  =>  12,
+    '%ALVLDISTADMIN%'  =>  1,
     '%ARCHIVEEMAIL%'  =>  2,
     '%BOUNCEEMAIL%'  =>  2,
     '%DBPREFIX%'  =>  79,
@@ -157,7 +158,7 @@ if (defined($opt_p)) {
         $CNT{'%DEFAULTLONGITUDE%'} += s/-97\.759783/%DEFAULTLONGITUDE%/g;
 
 	# Access Levels - this is a biggy
-	# Only an issue on the Lists
+	# Mostly an issue on the Lists
 	if ($table eq 'fabrik_lists') {
 
 	    # The "View list" top-level access control is actually a field, 'access', in
@@ -231,6 +232,35 @@ if (defined($opt_p)) {
 		}
 	    }
 
+	}
+
+	# Access Levels
+	# Elements can have access levels also
+	if ($table eq 'fabrik_elements') {
+
+	    # The "Editable" top-level access control is actually a field, 'access', in
+	    # the schema - the 26th field
+            if (/^\(((?:[^,]+,){25})([^,]+),/) {
+		$viewlistaccess = $2;
+		if (exists($ALEVEL{"$viewlistaccess"})) {
+		    # print STDOUT "element: $table  found access: " . $ALEVEL{"$viewlistaccess"} . "\n";
+		    # print STDOUT "  all:   $1\n";
+		    $newval = "(" . $1 . $ALEVEL{"$viewlistaccess"} . ",";
+		    $CNT{$ALEVEL{"$viewlistaccess"}} += s/^\(((?:[^,]+,){25})([^,]+),/$newval/e;
+		} else {
+		    if ($viewlistacces > 2) {
+			print STDOUT "WARNING: list: $table  not found access: $viewlistaccess\n";
+		    }
+		}
+	    }
+	    # view records       \"allow_view_details\":\"4\"
+	    if (/\\"view_access\\":\\"([0-9]+)\\"/) {
+		$access = $1;
+		if (exists($ALEVEL{"$access"})) {
+		    $newval = '\"view_access\":\"' . $ALEVEL{"$access"} . '\"';
+		    $CNT{$ALEVEL{"$access"}} += s/\\"view_access\\":\\"([0-9]+)\\"/$newval/e;
+		}
+	    }
 	}
 
 	# Joomla db prefix
