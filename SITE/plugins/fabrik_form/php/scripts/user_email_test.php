@@ -49,9 +49,17 @@ $founduser = $dbo->loadResult();
 
 
 if ($foundperson && !$founduser) {
-    $formModel->updateFormData($tableName.'___'.$useridfld.'_raw', 0, true);  // already should be 0
+    // already should be 0 - but let's be sure
+    // Also note that the JUser plugin (which runs after this plugin) is going to udpate this field.
+    $formModel->updateFormData($tableName.'___'.$useridfld.'_raw', 0, true);
     // This is the juicey bit - setting the rowid datum morphes the "register"
     // form from an "add" form to an "edit" form.
     $formModel->_rowId = $foundperson;
+    // It appears that you need to do a bunch of work to get this form slammed over to an "edit" form
+    $formModel->updateFormData($tableName.'___'.$personidfld, $foundperson, true);
+    $formModel->updateFormData($tableName.'___'.$personidfld.'_raw', $foundperson, true);
+    JRequest::setVar('rowid', $foundperson);
+    $_POST['rowid'] = $foundperson;
+    $_REQUEST['rowid'] = $foundperson;    
 }
 ?>
