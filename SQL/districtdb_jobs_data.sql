@@ -131,7 +131,8 @@ INSERT INTO `districtdb_jobs` VALUES (1,'UC','Unit Commissioner','Pack',1),
   (127,'PA','Parent','Varsity',0),
   (128,'UADV','Unit Advancement Chair','Varsity',0),
   (129,'HSC','Health and Safety Coordinator','Varsity',1),
-  (130,'UPK','Unit Popcorn Kernel','Varsity',1);
+  (130,'UPK','Unit Popcorn Kernel','Varsity',1),
+  (131,'FR','Friend','District',0);
 
 UNLOCK TABLES;
 

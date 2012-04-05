@@ -70,7 +70,7 @@ JHtml::_('behavior.keepalive');
 		$usersConfig = JComponentHelper::getParams('com_users');
 		if ($usersConfig->get('allowUserRegistration')) : ?>
 		<li>
-			<a href="<?php echo JRoute::_('index.php?option=com_fabrik&view=form&formid=2'); ?>">
+			<a href="<?php echo JRoute::_('index.php?option=com_fabrik&view=form&formid=16'); ?>">
 				<?php echo JText::_('MOD_LOGIN_REGISTER'); ?></a>
 		</li>
 		<?php endif; ?>
