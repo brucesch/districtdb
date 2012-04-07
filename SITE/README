@@ -11,4 +11,8 @@ This is the v.1.1.2 - Pass 2 @ Waterloo.
 -- pkg_fabrik_git_districtdb_2012_03_23_17_54_19.zip
 Added form plugin 'logs' to all forms for auditing. (#10)
 
+-- pkg_fabrik_git_districtdb_2012_04_05_15_01_36.zip
+This is post selenium test development and catch up to 3.0.5.1
+http://www.fabrikar.com/blog/75-fabrik-3051-released
+
 

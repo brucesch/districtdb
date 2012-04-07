@@ -49,6 +49,7 @@ if (isset($personid) && ($personid > 0)) {
     $persexistingsvc = $dbo->loadObjectList();
 }
 
+
 // Extract the service entries (if any) from the form
 $purgeform = array();
 $joinid = 0;
@@ -57,7 +58,8 @@ if (array_key_exists('join',$formModel->_formData) && (count($formModel->_formDa
     reset($formModel->_formData['join']);
     $joinid = key($formModel->_formData['join']);
     foreach ($formModel->_formData['join'][$joinid] as $elem => $val) {
-        if ($elem == 'districtdb_service___orgid_raw' || $elem == 'districtdb_service___jobid_raw') {
+      // These were '_raw' 'prior to 3.0.0.5
+        if ($elem == 'districtdb_service___orgid' || $elem == 'districtdb_service___jobid') {
             foreach ($val as $entry => $eval) {
                 if (is_array($eval)) {
                     if (isset($eval[0]) && ($eval[0] > 0)) {
@@ -241,8 +243,9 @@ function addDBtoForm($persexistingsvc, $joinid, &$formarray) {
 // Add an entry to the service form array
 function addFormSvcEntry($defaultjobid, $defaultorgid, &$formsvc) {
     $temparr = array();
-    $temparr['districtdb_service___jobid_raw'] = $defaultorgid;
-    $temparr['districtdb_service___orgid_raw'] = $defaultjobid;
+    // These were '_raw' prior to 3.0.0.5
+    $temparr['districtdb_service___jobid'] = $defaultorgid;
+    $temparr['districtdb_service___orgid'] = $defaultjobid;
     $formsvc[] = $temparr;
 }
 
@@ -252,8 +255,9 @@ function addFormSvcEntry($defaultjobid, $defaultorgid, &$formsvc) {
 function inDB($fval, $persexistingsvc) {
     $retval = NULL;
     foreach ($persexistingsvc as $entry => $val) {
-        if (($fval['districtdb_service___jobid_raw'] == $val->jobid) &&
-            ($fval['districtdb_service___orgid_raw'] == $val->orgid)) {
+      // These were '_raw' prior to 3.0.0.5
+        if (($fval['districtdb_service___jobid'] == $val->jobid) &&
+            ($fval['districtdb_service___orgid'] == $val->orgid)) {
         $retval = $val;
         }
     }
