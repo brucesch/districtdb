@@ -37,6 +37,7 @@ import com.brucesch.districtdb.selenium.Utils.*;
 public class CharterOrgs {
 
     private String baseUrl;
+    private String siteStyle;
     private String uniqueStr;
     private String browser;
     private String defsrvc_orgname;
@@ -58,6 +59,7 @@ public class CharterOrgs {
         prop = new Properties();
         prop.load(new FileInputStream("districtdbtest.properties"));
         baseUrl = prop.getProperty("baseUrl");
+        siteStyle = prop.getProperty("siteStyle");
         uniqueStr = prop.getProperty("uniqueStr");
         browser = prop.getProperty("browser");
         newcharterorgBase = (HashMap<String, String>) CharterOrgHelper.initCharterOrg(prop, logger);
@@ -93,8 +95,8 @@ public class CharterOrgs {
                 
         // Before we start with new user stuff lets check that he does not exist.
         logger.info("Init the DistAdmin helper panel.");
-        WebElement nameField = dadriver.findElement(By.id("modlgn-username"));
-        WebElement pwField   = dadriver.findElement(By.id("modlgn-passwd"));
+        WebElement nameField = Misc.getLoginElem(dadriver, "username", siteStyle, logger);
+        WebElement pwField   = Misc.getLoginElem(dadriver, "passwd", siteStyle, logger);
         nameField.clear();
         nameField.sendKeys(prop.getProperty("dauser.name"));
         pwField.clear();
@@ -118,7 +120,7 @@ public class CharterOrgs {
                                 
         // First verify that the Charter Org does not exist
         assertTrue("Charter Org already exists!! " + newcharterorg_a.get("OrgName"),
-                   CharterOrgHelper.verifyCharterOrg(dadriver, (HashMap <String, String>) newcharterorg_a, false, logger));
+                   CharterOrgHelper.verifyCharterOrg(dadriver, (HashMap <String, String>) newcharterorg_a, false, siteStyle, logger));
                 
         // Lets proceed with creating new CO
         logger.info("Beginning new CharterOrg creation.");
@@ -126,11 +128,11 @@ public class CharterOrgs {
         // Now fill in the new CO form
         logger.info("Filling in CharterOrg registration form.");
 
-        CharterOrgHelper.addCharterOrg(dadriver, (HashMap <String, String>) newcharterorg_a, true, logger);
+        CharterOrgHelper.addCharterOrg(dadriver, (HashMap <String, String>) newcharterorg_a, true, siteStyle, logger);
                 
         // Now check everything
         assertTrue("Mismatch in new charterorg profile " + newcharterorg_a.get("OrgName"),
-                   CharterOrgHelper.verifyCharterOrg(dadriver, (HashMap <String, String>) newcharterorg_a, true, logger));
+                   CharterOrgHelper.verifyCharterOrg(dadriver, (HashMap <String, String>) newcharterorg_a, true, siteStyle, logger));
 
 
         logger.info("----------------------------  Test: edit Charter Org -----");
@@ -139,20 +141,17 @@ public class CharterOrgs {
         Map<String, String> newcharterorg_aalt = new HashMap<String, String> ();
         newcharterorg_aalt.put("OrgName", newcharterorg_a.get("OrgName"));
         newcharterorg_aalt.put("Phone", "1-888-" + uniqueStr + " ext 000");
-        CharterOrgHelper.editCharterOrg(dadriver, (HashMap <String, String>) newcharterorg_aalt, true, logger);
+        CharterOrgHelper.editCharterOrg(dadriver, (HashMap <String, String>) newcharterorg_aalt, true, siteStyle, logger);
         assertTrue("Mismatch in new charterorg profile " + newcharterorg_aalt.get("OrgName"),
-                   CharterOrgHelper.verifyCharterOrg(dadriver, (HashMap <String, String>) newcharterorg_aalt, true, logger));
+                   CharterOrgHelper.verifyCharterOrg(dadriver, (HashMap <String, String>) newcharterorg_aalt, true, siteStyle, logger));
                   
         
         logger.info("----------------------------  Test: de-activate Charter Org -----");
 
         assertTrue("Error during edit Charter Org for " + newcharterorg_aalt.get("OrgName"),
-                   CharterOrgHelper.editCharterOrg(dadriver, (HashMap <String, String>) newcharterorg_aalt, false, logger));
+                   CharterOrgHelper.editCharterOrg(dadriver, (HashMap <String, String>) newcharterorg_aalt, false, siteStyle, logger));
         assertTrue("Mismatch in new charterorg profile " + newcharterorg_aalt.get("OrgName"),
-                   CharterOrgHelper.verifyCharterOrg(dadriver, (HashMap <String, String>) newcharterorg_aalt, false, logger));
-                  
-        
-                  
+                   CharterOrgHelper.verifyCharterOrg(dadriver, (HashMap <String, String>) newcharterorg_aalt, false, siteStyle, logger));
           
     }
 

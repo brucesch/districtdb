@@ -37,6 +37,7 @@ import com.brucesch.districtdb.selenium.Utils.*;
 public class Service {
 
     private String baseUrl;
+    private String siteStyle;
     private String uniqueStr;
     private String browser;
     private String defsrvc_orgname;
@@ -58,6 +59,7 @@ public class Service {
         prop = new Properties();
         prop.load(new FileInputStream("districtdbtest.properties"));
         baseUrl = prop.getProperty("baseUrl");
+        siteStyle = prop.getProperty("siteStyle");
         uniqueStr = prop.getProperty("uniqueStr");
         browser = prop.getProperty("browser");
         newjobBase = (HashMap<String, String>) ServiceHelper.initJob(prop, logger);
@@ -93,8 +95,8 @@ public class Service {
                 
         // Before we start with new user stuff lets check that he does not exist.
         logger.info("Init the DistAdmin helper panel.");
-        WebElement nameField = dadriver.findElement(By.id("modlgn-username"));
-        WebElement pwField   = dadriver.findElement(By.id("modlgn-passwd"));
+        WebElement nameField = Misc.getLoginElem(dadriver, "username", siteStyle, logger);
+        WebElement pwField   = Misc.getLoginElem(dadriver, "passwd", siteStyle, logger);
         nameField.clear();
         nameField.sendKeys(prop.getProperty("dauser.name"));
         pwField.clear();
@@ -118,7 +120,7 @@ public class Service {
                                 
         // First verify that the Job does not exist
         assertTrue("Job already exists!! " + newjob_a.get("Description"),
-                   ServiceHelper.verifyJob(dadriver, (HashMap <String, String>) newjob_a, false, logger));
+                   ServiceHelper.verifyJob(dadriver, (HashMap <String, String>) newjob_a, false, siteStyle, logger));
                 
         // Lets proceed with creating new Job
         logger.info("Beginning new Job creation.");
@@ -126,11 +128,11 @@ public class Service {
         // Now fill in the new Job form
         logger.info("Filling in Job registration form.");
 
-        ServiceHelper.addJob(dadriver, (HashMap <String, String>) newjob_a, logger);
+        ServiceHelper.addJob(dadriver, (HashMap <String, String>) newjob_a, siteStyle, logger);
                 
         // Now check everything
         assertTrue("Mismatch in new job profile " + newjob_a.get("Description"),
-                   ServiceHelper.verifyJob(dadriver, (HashMap <String, String>) newjob_a, true, logger));
+                   ServiceHelper.verifyJob(dadriver, (HashMap <String, String>) newjob_a, true, siteStyle, logger));
 
 
 
@@ -143,7 +145,7 @@ public class Service {
                                 
         // First verify that the Service does not exist
         assertTrue("Service already exists!! " + newservice_a.get("Description"),
-                   ServiceHelper.verifyMyService(dadriver, "", "Pack", "58", newservice_a.get("jobid"), false, logger) == -1);
+                   ServiceHelper.verifyMyService(dadriver, "", "Pack", "58", newservice_a.get("jobid"), false, siteStyle, logger) == -1);
                 
         // Lets proceed with creating new Service
         logger.info("Beginning new Service creation.");
@@ -151,10 +153,10 @@ public class Service {
         // Now fill in the new Service form
         logger.info("Filling in Service registration form.");
 
-        ServiceHelper.addMyService(dadriver, (HashMap <String, String>) newservice_a, logger);
+        ServiceHelper.addMyService(dadriver, (HashMap <String, String>) newservice_a, siteStyle, logger);
                 
         // Now check everything
-        int mysvcpos = ServiceHelper.verifyMyService(dadriver, "", "Pack", "58", newservice_a.get("jobid"), true, logger);
+        int mysvcpos = ServiceHelper.verifyMyService(dadriver, "", "Pack", "58", newservice_a.get("jobid"), true, siteStyle, logger);
         assertTrue("Mismatch in new service profile " + newservice_a.get("Description"),
                    mysvcpos > -1);
 
@@ -162,11 +164,11 @@ public class Service {
         logger.info("----------------------------  Test: deactivate My Service -----");
 
         assertTrue("Problem with deactivate My Service " + newservice_a.get("Description"),
-                   ServiceHelper.deactivateMyService(dadriver, mysvcpos, true, logger));
+                   ServiceHelper.deactivateMyService(dadriver, mysvcpos, true, siteStyle, logger));
 
         // Verify that the Service is gone
         assertTrue("Service not deactivated " + newservice_a.get("Description"),
-                   ServiceHelper.verifyMyService(dadriver, "", "Pack", "58", newservice_a.get("jobid"), false, logger) == -1);
+                   ServiceHelper.verifyMyService(dadriver, "", "Pack", "58", newservice_a.get("jobid"), false, siteStyle, logger) == -1);
                 
           
     }

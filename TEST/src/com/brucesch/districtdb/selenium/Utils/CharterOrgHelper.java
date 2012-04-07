@@ -69,27 +69,19 @@ public class CharterOrgHelper {
      * @param args
      */
     public static boolean verifyCharterOrg(WebDriver dadriver, HashMap<String, String> coinfo, 
-                                           boolean hasprofile, Logger logger) throws IOException {
+                                           boolean hasprofile, String siteStyle, Logger logger) throws IOException {
 
         logger.info("CharterOrgHelper::verifyCharterOrg for {}", coinfo.get("OrgName"));
             
         List <String> elemlist = new ArrayList <String>(Arrays.asList("OrgName", "CharterOrgType", "Website", "Phone", "Address", "City", "State", "Zip"));
         boolean retval = false;
             
-        // Get the Charter Orgs link.
-        WebDriverWait dawait = new WebDriverWait(dadriver, 30);
-        WebElement latestElem = dawait.until(new ExpectedCondition<WebElement>() {
-            @Override public WebElement apply(WebDriver d) {
-                return d.findElement(By.linkText("Charter Orgs"));
-            }
-        });
-
-                
-        // Bring up the Charter Orgs table and then search for the specific CO.
-        latestElem.click();
+        // Get the main list
+        Misc.getListPage(dadriver, "Charter Orgs", siteStyle, logger);
 
         // Get the clear filters button
-        latestElem = dawait.until(new ExpectedCondition<WebElement>() {
+        WebDriverWait dawait = new WebDriverWait(dadriver, 30);
+        WebElement latestElem = dawait.until(new ExpectedCondition<WebElement>() {
             @Override public WebElement apply(WebDriver d) {
                 return d.findElement(By.className("clearFilters"));
             }
@@ -127,7 +119,7 @@ public class CharterOrgHelper {
             }
         } else if (!hasprofile) {
             logger.info("CharterOrgHelper::verifyCharterOrg: {} exists and should not.", coinfo.get("OrgName"));
-        	retval = false;
+            retval = false;
         } else {
             logger.info("CharterOrgHelper::verifyCharterOrg: {} does exist at start.", coinfo.get("OrgName"));
             // Now the profile must match to be OK
@@ -152,12 +144,12 @@ public class CharterOrgHelper {
     /**
      * @param args
      */
-    public static void addCharterOrg(WebDriver dadriver, Map<String, String> coinfo, boolean active, Logger logger) throws IOException {
+    public static void addCharterOrg(WebDriver dadriver, Map<String, String> coinfo, boolean active, String siteStyle, Logger logger) throws IOException {
 
         logger.info("CharterOrgHelper::addCharterOrg for {}", coinfo.get("OrgName"));
 
-        // Bring up the Charter Orgs table and then search for the charterorg.
-        dadriver.findElement(By.linkText("Charter Orgs")).click();
+        // Get the main list
+        Misc.getListPage(dadriver, "Charter Orgs", siteStyle, logger);
 
         // Get the clear filters button
         WebDriverWait dawait = new WebDriverWait(dadriver, 30);
@@ -217,26 +209,18 @@ public class CharterOrgHelper {
     /**
      * @param args
      */
-    public static boolean editCharterOrg(WebDriver dadriver, Map<String, String> coinfo, boolean active, Logger logger) throws IOException {
+    public static boolean editCharterOrg(WebDriver dadriver, Map<String, String> coinfo, boolean active, String siteStyle, Logger logger) throws IOException {
 
         logger.info("CharterOrgHelper::editCharterOrg for {}", coinfo.get("OrgName"));
 
         boolean retval = true;
 
-        // Get the Charter Orgs link.
-        WebDriverWait dawait = new WebDriverWait(dadriver, 30);
-        WebElement latestElem = dawait.until(new ExpectedCondition<WebElement>() {
-            @Override public WebElement apply(WebDriver d) {
-                return d.findElement(By.linkText("Charter Orgs"));
-            }
-        });
-
-                
-        // Bring up the Charter Orgs table and then search for the specific CO.
-        latestElem.click();
+        // Get the main list
+        Misc.getListPage(dadriver, "Charter Orgs", siteStyle, logger);
 
         // Get the clear filters button
-        latestElem = dawait.until(new ExpectedCondition<WebElement>() {
+        WebDriverWait dawait = new WebDriverWait(dadriver, 30);
+        WebElement latestElem = dawait.until(new ExpectedCondition<WebElement>() {
             @Override public WebElement apply(WebDriver d) {
                 return d.findElement(By.className("clearFilters"));
             }

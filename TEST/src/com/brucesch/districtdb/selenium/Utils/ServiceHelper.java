@@ -62,26 +62,18 @@ public class ServiceHelper {
      * @param args
      */
     public static boolean verifyJob(WebDriver dadriver, HashMap<String, String> jobinfo, 
-                                           boolean hasprofile, Logger logger) throws IOException {
+                                    boolean hasprofile, String siteStyle, Logger logger) throws IOException {
 
         logger.info("JobHelper::verifyJob for {}", jobinfo.get("Description"));
             
         boolean retval = false;
             
-        // Get the Jobs link.
-        WebDriverWait dawait = new WebDriverWait(dadriver, 30);
-        WebElement latestElem = dawait.until(new ExpectedCondition<WebElement>() {
-            @Override public WebElement apply(WebDriver d) {
-                return d.findElement(By.linkText("Jobs"));
-            }
-        });
-
-                
-        // Bring up the Jobs table and then search for the specific user.
-        latestElem.click();
+        // Get the main list
+        Misc.getListPage(dadriver, "Jobs", siteStyle, logger);
 
         // Get the clear filters button
-        latestElem = dawait.until(new ExpectedCondition<WebElement>() {
+        WebDriverWait dawait = new WebDriverWait(dadriver, 30);
+        WebElement latestElem = dawait.until(new ExpectedCondition<WebElement>() {
             @Override public WebElement apply(WebDriver d) {
                 return d.findElement(By.className("clearFilters"));
             }
@@ -119,7 +111,7 @@ public class ServiceHelper {
             }
         } else if (!hasprofile) {
             logger.info("JobHelper::verifyJob: {} exists and should not.", jobinfo.get("Description"));
-                retval = false;
+            retval = false;
         } else {
             logger.info("JobHelper::verifyJob: {} does exist at start.", jobinfo.get("Description"));
             // Now the profile must match to be OK
@@ -142,12 +134,12 @@ public class ServiceHelper {
     /**
      * @param args
      */
-    public static void addJob(WebDriver dadriver, Map<String, String> jobinfo, Logger logger) throws IOException {
+    public static void addJob(WebDriver dadriver, Map<String, String> jobinfo, String siteStyle, Logger logger) throws IOException {
 
         logger.info("JobHelper::addJob");
 
-        // Bring up the Jobs table and then search for the job.
-        dadriver.findElement(By.linkText("Jobs")).click();
+        // Get the main list
+        Misc.getListPage(dadriver, "Jobs", siteStyle, logger);
 
         // Get the clear filters button
         WebDriverWait dawait = new WebDriverWait(dadriver, 30);
@@ -197,8 +189,8 @@ public class ServiceHelper {
      * This test verifies that the user has this one service out of a possible list of service.
      */
     public static int verifyMyService(WebDriver dadriver,
-                                        String serviceorgname, String serviceorgtype, String serviceunitnumber, String servicedescription,
-                                        boolean hasservice, Logger logger) throws IOException {
+                                      String serviceorgname, String serviceorgtype, String serviceunitnumber, String servicedescription,
+                                      boolean hasservice, String siteStyle, Logger logger) throws IOException {
 
         logger.info("ServiceHelper::verifyMyService single");
         
@@ -213,19 +205,14 @@ public class ServiceHelper {
         
         int retval = -1;
         
-        // Bring up the All Service form and then search for the user.
-        WebDriverWait dawait = new WebDriverWait(dadriver, 30);
-        WebElement latestElem = dawait.until(new ExpectedCondition<WebElement>() {
-            @Override public WebElement apply(WebDriver d) {
-                return d.findElement(By.linkText("My Service"));
-            }
-        });
-        latestElem.click();
+        // Get the main list
+        Misc.getListPage(dadriver, "My Service", siteStyle, logger);
 
         // No filters on My Service
         // No search on My Service
         // This is the My Service table
-        latestElem = dawait.until(new ExpectedCondition<WebElement>() {
+        WebDriverWait dawait = new WebDriverWait(dadriver, 30);
+        WebElement latestElem = dawait.until(new ExpectedCondition<WebElement>() {
             @Override public WebElement apply(WebDriver d) {
                 return d.findElement(By.id("listform_8_com_fabrik_8"));
             }
@@ -271,12 +258,12 @@ public class ServiceHelper {
     /**
      * @param args
      */
-    public static void addMyService(WebDriver dadriver, Map<String, String> svcinfo, Logger logger) throws IOException {
+    public static void addMyService(WebDriver dadriver, Map<String, String> svcinfo, String siteStyle, Logger logger) throws IOException {
 
         logger.info("ServiceHelper::addMyService for {}", svcinfo.get("Description"));
 
-        // Bring up the Services table and then search for the service.
-        dadriver.findElement(By.linkText("My Service")).click();
+        // Get the main list
+        Misc.getListPage(dadriver, "My Service", siteStyle, logger);
 
         // No filters on My Service
 
@@ -315,14 +302,14 @@ public class ServiceHelper {
      * Deactivate a My Service entry by position
      */
     public static boolean deactivateMyService(WebDriver dadriver, int myservice,
-                                        boolean hasservice, Logger logger) throws IOException {
+                                              boolean hasservice, String siteStyle, Logger logger) throws IOException {
 
         logger.info("ServiceHelper::deactivateMyService single");
         
         boolean retval = false;
         
-        // Bring up the All Service form and then search for the user.
-        dadriver.findElement(By.linkText("My Service")).click();
+        // Get the main list
+        Misc.getListPage(dadriver, "My Service", siteStyle, logger);
 
         // No filters on My Service
         // No search on My Service

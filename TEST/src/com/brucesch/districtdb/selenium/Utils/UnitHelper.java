@@ -70,27 +70,19 @@ public class UnitHelper {
      * @param args
      */
     public static boolean verifyUnit(WebDriver dadriver, HashMap<String, String> unitinfo, 
-                                     boolean hasprofile, Logger logger) throws IOException {
+                                     boolean hasprofile, String siteStyle, Logger logger) throws IOException {
 
         logger.info("UnitHelper::verifyUnit for {}", unitinfo.get("OrgNumber"));
             
         List <String> elemlist = new ArrayList <String>(Arrays.asList("OrgType", "OrgNumber", "Location", "Website", "CharterOrgType", "OrgName", "Phone", "Address", "City", "State", "Zip"));
         boolean retval = false;
             
-        // Get the Units link.
-        WebDriverWait dawait = new WebDriverWait(dadriver, 30);
-        WebElement latestElem = dawait.until(new ExpectedCondition<WebElement>() {
-            @Override public WebElement apply(WebDriver d) {
-                return d.findElement(By.linkText("Units"));
-            }
-        });
-
-                
-        // Bring up the Units table and then search for the specific Unit.
-        latestElem.click();
+        // Get the main list
+        Misc.getListPage(dadriver, "Units", siteStyle, logger);
 
         // Get the clear filters button
-        latestElem = dawait.until(new ExpectedCondition<WebElement>() {
+        WebDriverWait dawait = new WebDriverWait(dadriver, 30);
+        WebElement latestElem = dawait.until(new ExpectedCondition<WebElement>() {
             @Override public WebElement apply(WebDriver d) {
                 return d.findElement(By.className("clearFilters"));
             }
@@ -138,7 +130,7 @@ public class UnitHelper {
             for (Map.Entry<String, String> entry : unitinfo.entrySet()) {
                 if (elemlist.contains(entry.getKey())) {
                     // CharterOrgType and OrgName need special treatment because they are in the view
-                	String elemval;
+                    String elemval;
                     if (!(entry.getKey().equals("CharterOrgType") || entry.getKey().equals("OrgName"))) {
                         elemval = tabledata.findElement(By.className("districtdb_orgs___"+entry.getKey())).getText().trim();
                     } else {
@@ -159,7 +151,7 @@ public class UnitHelper {
     /**
      * @param args
      */
-    public static void addUnit(WebDriver dadriver, Map<String, String> unitinfo, boolean active, Logger logger) throws IOException {
+    public static void addUnit(WebDriver dadriver, Map<String, String> unitinfo, boolean active, String siteStyle, Logger logger) throws IOException {
 
         logger.info("UnitHelper::addUnit for {}", unitinfo.get("OrgNumber"));
 
@@ -167,8 +159,8 @@ public class UnitHelper {
         List <String> elemlistwco  = new ArrayList <String>(Arrays.asList("OrgType", "OrgNumber", "Location", "Website", "CharterOrgID"));
         List <String> elemlist;
 
-        // Bring up the Units table.
-        dadriver.findElement(By.linkText("Units")).click();
+        // Get the main list
+        Misc.getListPage(dadriver, "Units", siteStyle, logger);
 
         // Get the clear filters button
         WebDriverWait dawait = new WebDriverWait(dadriver, 30);
@@ -240,7 +232,7 @@ public class UnitHelper {
     /**
      * @param args
      */
-    public static boolean editUnit(WebDriver dadriver, Map<String, String> unitinfo, boolean active, Logger logger) throws IOException {
+    public static boolean editUnit(WebDriver dadriver, Map<String, String> unitinfo, boolean active, String siteStyle, Logger logger) throws IOException {
 
         logger.info("UnitHelper::editUnit for {}", unitinfo.get("OrgNumber"));
 
@@ -250,20 +242,12 @@ public class UnitHelper {
 
         boolean retval = true;
 
-        // Get the Units link.
-        WebDriverWait dawait = new WebDriverWait(dadriver, 30);
-        WebElement latestElem = dawait.until(new ExpectedCondition<WebElement>() {
-            @Override public WebElement apply(WebDriver d) {
-                return d.findElement(By.linkText("Units"));
-            }
-        });
-
-                
-        // Bring up the Units table and then search for the specific Unit.
-        latestElem.click();
+        // Get the main list
+        Misc.getListPage(dadriver, "Units", siteStyle, logger);
 
         // Get the clear filters button
-        latestElem = dawait.until(new ExpectedCondition<WebElement>() {
+        WebDriverWait dawait = new WebDriverWait(dadriver, 30);
+        WebElement latestElem = dawait.until(new ExpectedCondition<WebElement>() {
             @Override public WebElement apply(WebDriver d) {
                 return d.findElement(By.className("clearFilters"));
             }

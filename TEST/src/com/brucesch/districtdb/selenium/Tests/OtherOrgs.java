@@ -37,6 +37,7 @@ import com.brucesch.districtdb.selenium.Utils.*;
 public class OtherOrgs {
 
     private String baseUrl;
+    private String siteStyle;
     private String uniqueStr;
     private String browser;
     private String defsrvc_orgname;
@@ -58,6 +59,7 @@ public class OtherOrgs {
         prop = new Properties();
         prop.load(new FileInputStream("districtdbtest.properties"));
         baseUrl = prop.getProperty("baseUrl");
+        siteStyle = prop.getProperty("siteStyle");
         uniqueStr = prop.getProperty("uniqueStr");
         browser = prop.getProperty("browser");
         newotherorgBase = (HashMap<String, String>) OtherOrgHelper.initOtherOrg(prop, logger);
@@ -93,8 +95,8 @@ public class OtherOrgs {
                 
         // Before we start with new user stuff lets check that he does not exist.
         logger.info("Init the DistAdmin helper panel.");
-        WebElement nameField = dadriver.findElement(By.id("modlgn-username"));
-        WebElement pwField   = dadriver.findElement(By.id("modlgn-passwd"));
+        WebElement nameField = Misc.getLoginElem(dadriver, "username", siteStyle, logger);
+        WebElement pwField   = Misc.getLoginElem(dadriver, "passwd", siteStyle, logger);
         nameField.clear();
         nameField.sendKeys(prop.getProperty("dauser.name"));
         pwField.clear();
@@ -118,7 +120,7 @@ public class OtherOrgs {
                                 
         // First verify that the Other Org does not exist
         assertTrue("Other Org already exists!! " + newotherorg_a.get("OrgName"),
-                   OtherOrgHelper.verifyOtherOrg(dadriver, (HashMap <String, String>) newotherorg_a, false, logger));
+                   OtherOrgHelper.verifyOtherOrg(dadriver, (HashMap <String, String>) newotherorg_a, false, baseUrl, siteStyle, logger));
                 
         // Lets proceed with creating new Other Org
         logger.info("Beginning new OtherOrg creation.");
@@ -126,11 +128,11 @@ public class OtherOrgs {
         // Now fill in the new Other Org form
         logger.info("Filling in OtherOrg registration form.");
 
-        OtherOrgHelper.addOtherOrg(dadriver, (HashMap <String, String>) newotherorg_a, true, logger);
+        OtherOrgHelper.addOtherOrg(dadriver, (HashMap <String, String>) newotherorg_a, true, baseUrl, siteStyle, logger);
                 
         // Now check everything
         assertTrue("Mismatch in new otherorg profile " + newotherorg_a.get("OrgName"),
-                   OtherOrgHelper.verifyOtherOrg(dadriver, (HashMap <String, String>) newotherorg_a, true, logger));
+                   OtherOrgHelper.verifyOtherOrg(dadriver, (HashMap <String, String>) newotherorg_a, true, baseUrl, siteStyle, logger));
 
 
         logger.info("----------------------------  Test: edit Other Org -----");
@@ -139,17 +141,17 @@ public class OtherOrgs {
         Map<String, String> newotherorg_aalt = new HashMap<String, String> ();
         newotherorg_aalt.put("OrgName", newotherorg_a.get("OrgName"));
         newotherorg_aalt.put("Phone", "1-888-" + uniqueStr + " ext 000");
-        OtherOrgHelper.editOtherOrg(dadriver, (HashMap <String, String>) newotherorg_aalt, true, logger);
+        OtherOrgHelper.editOtherOrg(dadriver, (HashMap <String, String>) newotherorg_aalt, true, baseUrl, siteStyle, logger);
         assertTrue("Mismatch in new otherorg profile " + newotherorg_aalt.get("OrgName"),
-                   OtherOrgHelper.verifyOtherOrg(dadriver, (HashMap <String, String>) newotherorg_aalt, true, logger));
+                   OtherOrgHelper.verifyOtherOrg(dadriver, (HashMap <String, String>) newotherorg_aalt, true, baseUrl, siteStyle, logger));
                   
         
         logger.info("----------------------------  Test: de-activate Other Org -----");
 
         assertTrue("Error during edit Other Org for " + newotherorg_aalt.get("OrgName"),
-                   OtherOrgHelper.editOtherOrg(dadriver, (HashMap <String, String>) newotherorg_aalt, false, logger));
+                   OtherOrgHelper.editOtherOrg(dadriver, (HashMap <String, String>) newotherorg_aalt, false, baseUrl, siteStyle, logger));
         assertTrue("Mismatch in new otherorg profile " + newotherorg_aalt.get("OrgName"),
-                   OtherOrgHelper.verifyOtherOrg(dadriver, (HashMap <String, String>) newotherorg_aalt, false, logger));
+                   OtherOrgHelper.verifyOtherOrg(dadriver, (HashMap <String, String>) newotherorg_aalt, false, baseUrl, siteStyle, logger));
                   
         
                   

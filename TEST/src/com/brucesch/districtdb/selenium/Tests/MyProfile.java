@@ -37,6 +37,7 @@ import com.brucesch.districtdb.selenium.Utils.*;
 public class MyProfile {
 
     private String baseUrl;
+    private String siteStyle;
     private String uniqueStr;
     private String browser;
     private String defsrvc_orgname;
@@ -58,6 +59,7 @@ public class MyProfile {
         prop = new Properties();
         prop.load(new FileInputStream("districtdbtest.properties"));
         baseUrl = prop.getProperty("baseUrl");
+        siteStyle = prop.getProperty("siteStyle");
         uniqueStr = prop.getProperty("uniqueStr");
         browser = prop.getProperty("browser");
         defsrvc_orgname = prop.getProperty("defsrvc.orgname");
@@ -104,8 +106,8 @@ public class MyProfile {
                 
         // Before we start with new user stuff lets check that he does not exist.
         logger.info("Init the DistAdmin helper panel.");
-        WebElement nameField = dadriver.findElement(By.id("modlgn-username"));
-        WebElement pwField   = dadriver.findElement(By.id("modlgn-passwd"));
+        WebElement nameField = Misc.getLoginElem(dadriver, "username", siteStyle, logger);
+        WebElement pwField   = Misc.getLoginElem(dadriver, "passwd", siteStyle, logger);
         nameField.clear();
         nameField.sendKeys(prop.getProperty("dauser.name"));
         pwField.clear();
@@ -129,7 +131,7 @@ public class MyProfile {
                                 
         // Verify that the newuser does not already have a profile
         assertTrue("User already exists!! " + newuser_a.get("username"),
-                   PersonHelper.verifyProfile(dadriver, (HashMap <String, String>) newuser_a, false, false, false, logger));
+                   PersonHelper.verifyProfile(dadriver, (HashMap <String, String>) newuser_a, false, false, false, siteStyle, logger));
                 
                         
         // Lets proceed with registering as a new user
@@ -142,11 +144,11 @@ public class MyProfile {
         String[] serviceunitnumber = {};
         String[] servicedescription = {};
         PersonHelper.createPerson(tstdriver, (HashMap <String, String>) newuser_a, 
-                                  serviceorgname, serviceorgtype, serviceunitnumber, servicedescription, true, logger);
+                                  serviceorgname, serviceorgtype, serviceunitnumber, servicedescription, true, siteStyle, logger);
                 
         // Now check everything
         assertTrue("Mismatch in newuser profile " + newuser_a.get("username"),
-                   PersonHelper.verifyProfile(dadriver, (HashMap <String, String>) newuser_a, true, true, true, logger));
+                   PersonHelper.verifyProfile(dadriver, (HashMap <String, String>) newuser_a, true, true, true, siteStyle, logger));
         serviceorgname = new String[] {defsrvc_orgname};
         serviceorgtype = new String[] {defsrvc_orgtype};
         serviceunitnumber = new String[] {defsrvc_unitnumber};
@@ -154,7 +156,7 @@ public class MyProfile {
         assertTrue("Mismatch in newuser service " + newuser_a.get("username"),
                    PersonHelper.verifyService(dadriver, (HashMap <String, String>) newuser_a, 
                                               serviceorgname, serviceorgtype, serviceunitnumber, servicedescription,
-                                              true, logger));
+                                              true, siteStyle, logger));
                 
         logger.info("----------------------------  Test: new user, no profile, with service -----");
                 
@@ -163,7 +165,7 @@ public class MyProfile {
                                 
         // Verify that the newuser does not already have a profile
         assertTrue("User already exists!! " + newuser_b.get("username"),
-                   PersonHelper.verifyProfile(dadriver, (HashMap <String, String>) newuser_b, false, false, false, logger));
+                   PersonHelper.verifyProfile(dadriver, (HashMap <String, String>) newuser_b, false, false, false, siteStyle, logger));
                 
                         
         // Lets proceed with registering as a new user
@@ -176,15 +178,15 @@ public class MyProfile {
         serviceunitnumber = new String[] {"37", "2020", ""};
         servicedescription = new String[] {"Parent", "Assistant Scoutmaster", "Advancement Committee Chair"};
         PersonHelper.createPerson(tstdriver, (HashMap <String, String>) newuser_b, 
-                                  serviceorgname, serviceorgtype, serviceunitnumber, servicedescription, true, logger);
+                                  serviceorgname, serviceorgtype, serviceunitnumber, servicedescription, true, siteStyle, logger);
                 
         // Now check everything
         assertTrue("Mismatch in newuser profile " + newuser_b.get("username"),
-                   PersonHelper.verifyProfile(dadriver, (HashMap <String, String>) newuser_b, true, true, true, logger));
+                   PersonHelper.verifyProfile(dadriver, (HashMap <String, String>) newuser_b, true, true, true, siteStyle, logger));
         assertTrue("Mismatch in newuser service " + newuser_b.get("username"),
                    PersonHelper.verifyService(dadriver, (HashMap <String, String>) newuser_b, 
                                               serviceorgname, serviceorgtype, serviceunitnumber, servicedescription,
-                                              true, logger));
+                                              true, siteStyle, logger));
                 
         logger.info("----------------------------  Test: new user, with profile, with service -----");
                 
@@ -193,15 +195,15 @@ public class MyProfile {
                                 
         // Verify that the newuser does not already have a profile
         assertTrue("User already exists!! " + newuser_c.get("username"),
-                   PersonHelper.verifyProfile(dadriver, (HashMap <String, String>) newuser_c, false, false, false, logger));
+                   PersonHelper.verifyProfile(dadriver, (HashMap <String, String>) newuser_c, false, false, false, siteStyle, logger));
                 
         // Create a user profile before the user registers at the site
         PersonHelper.addPerson(dadriver, (HashMap <String, String>) newuser_c, 
-                               true, true, logger);
+                               true, true, siteStyle, logger);
                 
         // Now verify that the person is there and has the default service
         assertTrue("User should exist with no JUser, yes NL " + newuser_c.get("username"),
-                   PersonHelper.verifyProfile(dadriver, (HashMap <String, String>) newuser_c, false, true, true, logger));
+                   PersonHelper.verifyProfile(dadriver, (HashMap <String, String>) newuser_c, false, true, true, siteStyle, logger));
         serviceorgname = new String[] {defsrvc_orgname};
         serviceorgtype = new String[] {defsrvc_orgtype};
         serviceunitnumber = new String[] {defsrvc_unitnumber};
@@ -209,7 +211,7 @@ public class MyProfile {
         assertTrue("Mismatch in newuser service - initial " + newuser_c.get("username"),
                    PersonHelper.verifyService(dadriver, (HashMap <String, String>) newuser_c, 
                                               serviceorgname, serviceorgtype, serviceunitnumber, servicedescription,
-                                              true, logger));
+                                              true, siteStyle, logger));
                 
         // Now register with one service but NO newsletter.
         serviceorgname = new String[] {""};
@@ -217,11 +219,11 @@ public class MyProfile {
         serviceunitnumber = new String[] {"42"};
         servicedescription = new String[] {"Parent"};
         PersonHelper.createPerson(tstdriver, (HashMap <String, String>) newuser_c, 
-                                  serviceorgname, serviceorgtype, serviceunitnumber, servicedescription, false, logger);
+                                  serviceorgname, serviceorgtype, serviceunitnumber, servicedescription, false, siteStyle, logger);
                 
         // Finally verify the results
         assertTrue("User should exist with yes JUser, no NL " + newuser_c.get("username"),
-                   PersonHelper.verifyProfile(dadriver, (HashMap <String, String>) newuser_c, true, false, true, logger));
+                   PersonHelper.verifyProfile(dadriver, (HashMap <String, String>) newuser_c, true, false, true, siteStyle, logger));
         serviceorgname = new String[] {"", defsrvc_orgname};
         serviceorgtype = new String[] {"Pack", defsrvc_orgtype};
         serviceunitnumber = new String[] {"42", defsrvc_unitnumber};
@@ -229,7 +231,7 @@ public class MyProfile {
         assertTrue("Mismatch in newuser service - final " + newuser_c.get("username"),
                    PersonHelper.verifyService(dadriver, (HashMap <String, String>) newuser_c, 
                                               serviceorgname, serviceorgtype, serviceunitnumber, servicedescription,
-                                              true, logger));
+                                              true, siteStyle, logger));
                 
         logger.info("----------------------------  Test: NEG new user reg, dupe email -----");
                 
@@ -243,7 +245,7 @@ public class MyProfile {
         // Twiddle the username to something different
         newuser_c.put("username", "notaduplicationusername");
         PersonHelper.createPerson(tstdriver, (HashMap <String, String>) newuser_c, 
-                                  serviceorgname, serviceorgtype, serviceunitnumber, servicedescription, false, logger);
+                                  serviceorgname, serviceorgtype, serviceunitnumber, servicedescription, false, siteStyle, logger);
         // Now check for the dupe email error
         assertTrue("Missing dupe email reg header.", Misc.verifyMsg(tstdriver, "hdrmsg", 
                                                                     "Some parts of your form have not been correctly filled in", logger));
@@ -258,7 +260,7 @@ public class MyProfile {
         // Twiddle the email to something different
         newuser_c.put("email", "nondupemail@schurmann.org");
         PersonHelper.createPerson(tstdriver, (HashMap <String, String>) newuser_c, 
-                                  serviceorgname, serviceorgtype, serviceunitnumber, servicedescription, false, logger);
+                                  serviceorgname, serviceorgtype, serviceunitnumber, servicedescription, false, siteStyle, logger);
         // Now check for the dupe username error
         assertTrue("Missing dupe username reg header.", Misc.verifyMsg(tstdriver, "hdrmsg", 
                                                                        "Some parts of your form have not been correctly filled in", logger));
@@ -273,7 +275,7 @@ public class MyProfile {
         // Twiddle the username to something different
         newuser_c.put("username", "notaduplicationusername");
         PersonHelper.addPerson(dadriver, (HashMap <String, String>) newuser_c, 
-                               true, true, logger);
+                               true, true, siteStyle, logger);
         // Now check for the dupe email error
         assertTrue("Missing dupe email reg header.", Misc.verifyMsg(dadriver, "hdrmsg", 
                                                                     "Some parts of your form have not been correctly filled in", logger));
@@ -290,9 +292,9 @@ public class MyProfile {
         newuser_distadmin.put("username", prop.getProperty("dauser.name"));
         newuser_distadmin.put("password", prop.getProperty("dauser.pw"));
         newuser_distadmin.put("phone", "1-888-" + uniqueStr + " ext 000");
-        PersonHelper.myProfile(dadriver, newuser_distadmin, true, logger);
+        PersonHelper.myProfile(dadriver, newuser_distadmin, true, siteStyle, logger);
         assertTrue("My Profile edit appears to have failed",
-                   PersonHelper.verifyProfile(dadriver, (HashMap <String, String>) newuser_distadmin, true, true, true, logger));
+                   PersonHelper.verifyProfile(dadriver, (HashMap <String, String>) newuser_distadmin, true, true, true, siteStyle, logger));
         
                   
         logger.info("----------------------------  Test: Edit Person Profile not JUser -----");
@@ -302,24 +304,24 @@ public class MyProfile {
                                 
         // Verify that the newuser does not already have a profile
         assertTrue("User already exists!! " + newuser_d.get("username"),
-                   PersonHelper.verifyProfile(dadriver, (HashMap <String, String>) newuser_d, false, false, false, logger));
+                   PersonHelper.verifyProfile(dadriver, (HashMap <String, String>) newuser_d, false, false, false, siteStyle, logger));
                 
         // Create a user profile before the user registers at the site
         PersonHelper.addPerson(dadriver, (HashMap <String, String>) newuser_d, 
-                               true, true, logger);
+                               true, true, siteStyle, logger);
                 
         // Now verify that the person is there
         assertTrue("User should exist with no JUser, yes NL " + newuser_d.get("username"),
-                   PersonHelper.verifyProfile(dadriver, (HashMap <String, String>) newuser_d, false, true, true, logger));
+                   PersonHelper.verifyProfile(dadriver, (HashMap <String, String>) newuser_d, false, true, true, siteStyle, logger));
 
         // Twiddle the phone number
         Map<String, String> newuser_dalt = new HashMap<String, String> ();
         newuser_dalt.put("username", newuser_d.get("username"));
         newuser_dalt.put("phone", "1-888-" + uniqueStr + " ext 000");
         assertTrue("Something wrong with the edit Person Profile form for " + newuser_dalt.get("username"), 
-                   PersonHelper.editPerson(dadriver, (HashMap <String, String>) newuser_dalt, true, true, false, logger));
+                   PersonHelper.editPerson(dadriver, (HashMap <String, String>) newuser_dalt, true, true, false, siteStyle, logger));
         assertTrue("User should exist with no JUser, yes NL, altered phone " + newuser_dalt.get("username"),
-                   PersonHelper.verifyProfile(dadriver, (HashMap <String, String>) newuser_dalt, false, true, true, logger));
+                   PersonHelper.verifyProfile(dadriver, (HashMap <String, String>) newuser_dalt, false, true, true, siteStyle, logger));
         // Just to keep things consistent
         newuser_d.put("phone", newuser_dalt.get("phone"));
                    
@@ -328,16 +330,16 @@ public class MyProfile {
                 
         // Verify that the person is there
         assertTrue("User should exist with yes JUser, yes NL " + newuser_b.get("username"),
-                   PersonHelper.verifyProfile(dadriver, (HashMap <String, String>) newuser_b, true, true, true, logger));
+                   PersonHelper.verifyProfile(dadriver, (HashMap <String, String>) newuser_b, true, true, true, siteStyle, logger));
 
         // Twiddle the phone number
         Map<String, String> newuser_balt = new HashMap<String, String> ();
         newuser_balt.put("username", newuser_b.get("username"));
         newuser_balt.put("phone", "1-888-" + uniqueStr + " ext 000");
         assertTrue("Something wrong with the edit Person Profile form for " + newuser_balt.get("username"), 
-                   PersonHelper.editPerson(dadriver, (HashMap <String, String>) newuser_balt, true, true, true, logger));
+                   PersonHelper.editPerson(dadriver, (HashMap <String, String>) newuser_balt, true, true, true, siteStyle, logger));
         assertTrue("User should exist with no JUser, yes NL, altered phone " + newuser_balt.get("username"),
-                   PersonHelper.verifyProfile(dadriver, (HashMap <String, String>) newuser_balt, true, true, true, logger));
+                   PersonHelper.verifyProfile(dadriver, (HashMap <String, String>) newuser_balt, true, true, true, siteStyle, logger));
         // Just to keep things consistent
         newuser_b.put("phone", newuser_balt.get("phone"));
                    
@@ -346,11 +348,11 @@ public class MyProfile {
                 
         // Verify that the person is there
         assertTrue("User should exist with yes JUser, yes NL " + newuser_b.get("username"),
-                   PersonHelper.verifyProfile(dadriver, (HashMap <String, String>) newuser_b, true, true, true, logger));
+                   PersonHelper.verifyProfile(dadriver, (HashMap <String, String>) newuser_b, true, true, true, siteStyle, logger));
         assertTrue("Something wrong with the edit Person Profile form for " + newuser_b.get("username"), 
-                   PersonHelper.editPerson(dadriver, (HashMap <String, String>) newuser_b, false, false, true, logger));
+                   PersonHelper.editPerson(dadriver, (HashMap <String, String>) newuser_b, false, false, true, siteStyle, logger));
         assertTrue("User should be de-activated" + newuser_b.get("username"),
-                   PersonHelper.verifyProfile(dadriver, (HashMap <String, String>) newuser_b, false, false, false, logger));
+                   PersonHelper.verifyProfile(dadriver, (HashMap <String, String>) newuser_b, false, false, false, siteStyle, logger));
                 
                   
           

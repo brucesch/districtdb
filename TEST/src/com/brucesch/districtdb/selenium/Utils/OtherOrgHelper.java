@@ -69,27 +69,19 @@ public class OtherOrgHelper {
      * @param args
      */
     public static boolean verifyOtherOrg(WebDriver dadriver, HashMap<String, String> othinfo, 
-                                           boolean hasprofile, Logger logger) throws IOException {
+                                         boolean hasprofile, String baseUrl, String siteStyle, Logger logger) throws IOException {
 
         logger.info("OtherOrgHelper::verifyOtherOrg for {}", othinfo.get("OrgName"));
             
         List <String> elemlist = new ArrayList <String>(Arrays.asList("OrgName", "OrgType", "Website", "Phone", "Address", "City", "State", "Zip"));
         boolean retval = false;
-            
-        // Get the Other Orgs link.
-        WebDriverWait dawait = new WebDriverWait(dadriver, 30);
-        WebElement latestElem = dawait.until(new ExpectedCondition<WebElement>() {
-            @Override public WebElement apply(WebDriver d) {
-                return d.findElement(By.linkText("Other Orgs"));
-            }
-        });
-
-                
-        // Bring up the Other Orgs table and then search for the specific CO.
-        latestElem.click();
+        
+	// Get the main list
+	Misc.getListPage(dadriver, "Other Orgs", siteStyle, logger);
 
         // Get the clear filters button
-        latestElem = dawait.until(new ExpectedCondition<WebElement>() {
+	WebDriverWait dawait = new WebDriverWait(dadriver, 30);
+        WebElement latestElem = dawait.until(new ExpectedCondition<WebElement>() {
             @Override public WebElement apply(WebDriver d) {
                 return d.findElement(By.className("clearFilters"));
             }
@@ -127,7 +119,7 @@ public class OtherOrgHelper {
             }
         } else if (!hasprofile) {
             logger.info("OtherOrgHelper::verifyOtherOrg: {} exists and should not.", othinfo.get("OrgName"));
-        	retval = false;
+            retval = false;
         } else {
             logger.info("OtherOrgHelper::verifyOtherOrg: {} does exist at start.", othinfo.get("OrgName"));
             // Now the profile must match to be OK
@@ -152,12 +144,12 @@ public class OtherOrgHelper {
     /**
      * @param args
      */
-    public static void addOtherOrg(WebDriver dadriver, Map<String, String> othinfo, boolean active, Logger logger) throws IOException {
+    public static void addOtherOrg(WebDriver dadriver, Map<String, String> othinfo, boolean active, String baseUrl, String siteStyle, Logger logger) throws IOException {
 
         logger.info("OtherOrgHelper::addOtherOrg for {}", othinfo.get("OrgName"));
 
-        // Bring up the Other Orgs table and then search for the otherorg.
-        dadriver.findElement(By.linkText("Other Orgs")).click();
+	// Get the main list
+	Misc.getListPage(dadriver, "Other Orgs", siteStyle, logger);
 
         // Get the clear filters button
         WebDriverWait dawait = new WebDriverWait(dadriver, 30);
@@ -217,26 +209,18 @@ public class OtherOrgHelper {
     /**
      * @param args
      */
-    public static boolean editOtherOrg(WebDriver dadriver, Map<String, String> othinfo, boolean active, Logger logger) throws IOException {
+    public static boolean editOtherOrg(WebDriver dadriver, Map<String, String> othinfo, boolean active, String baseUrl, String siteStyle, Logger logger) throws IOException {
 
         logger.info("OtherOrgHelper::editOtherOrg for {}", othinfo.get("OrgName"));
 
         boolean retval = true;
 
-        // Get the Other Orgs link.
-        WebDriverWait dawait = new WebDriverWait(dadriver, 30);
-        WebElement latestElem = dawait.until(new ExpectedCondition<WebElement>() {
-            @Override public WebElement apply(WebDriver d) {
-                return d.findElement(By.linkText("Other Orgs"));
-            }
-        });
-
-                
-        // Bring up the Other Orgs table and then search for the specific CO.
-        latestElem.click();
+	// Get the main list
+	Misc.getListPage(dadriver, "Other Orgs", siteStyle, logger);
 
         // Get the clear filters button
-        latestElem = dawait.until(new ExpectedCondition<WebElement>() {
+        WebDriverWait dawait = new WebDriverWait(dadriver, 30);
+        WebElement latestElem = dawait.until(new ExpectedCondition<WebElement>() {
             @Override public WebElement apply(WebDriver d) {
                 return d.findElement(By.className("clearFilters"));
             }

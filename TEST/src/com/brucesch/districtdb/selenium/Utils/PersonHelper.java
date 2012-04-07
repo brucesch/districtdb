@@ -68,12 +68,28 @@ public class PersonHelper {
      */
     public static void createPerson(WebDriver driver, HashMap<String, String> userinfo, 
                                     String[] serviceorgname, String[] serviceorgtype, String[] serviceunitnumber, String[] servicedescription,
-                                    boolean newsletter, Logger logger) throws IOException {
+                                    boolean newsletter, String siteStyle, Logger logger) throws IOException {
 
         logger.info("PersonHelper::createPerson for {}", userinfo.get("username"));
 
-        driver.findElement(By.linkText("Create an account")).click();
         WebDriverWait wait = new WebDriverWait(driver, 30);
+        WebElement latestElem = null;
+
+        // Some sites need us to naviagate back to Home to get the create new user link
+        if (siteStyle.equals("B")) {
+            // This is the waterloo style
+            // Menus only on the Home page, need to keep going to Home for the menu links
+            latestElem = wait.until(Misc.visibilityOfElementLocated(By.linkText("HOME")));
+            latestElem.click();
+        }
+
+        latestElem = wait.until(new ExpectedCondition<WebElement>() {
+            @Override public WebElement apply(WebDriver d) {
+                return d.findElement(By.linkText("Create an account"));
+            }
+        });
+        latestElem.click();
+            
         wait.until(new ExpectedCondition<WebElement>() {
             @Override public WebElement apply(WebDriver d) {
                 return d.findElement(By.id("form_16"));
@@ -131,7 +147,7 @@ public class PersonHelper {
      */
     public static boolean verifyProfile(WebDriver dadriver, HashMap<String, String> userinfo, 
                                         boolean confirmed, boolean nomail, 
-                                        boolean hasprofile, Logger logger) throws IOException {
+                                        boolean hasprofile, String siteStyle, Logger logger) throws IOException {
 
         logger.info("PersonHelper::verifyProfile for {}", userinfo.get("username"));
             
@@ -147,19 +163,12 @@ public class PersonHelper {
         List <String> elemlist = new ArrayList <String>(Arrays.asList("email", "phone", "address1", "city", "state", "zip"));
         boolean retval = false;
             
-        // Get the All People link.
-        WebDriverWait dawait = new WebDriverWait(dadriver, 30);
-        WebElement latestElem = dawait.until(new ExpectedCondition<WebElement>() {
-            @Override public WebElement apply(WebDriver d) {
-                return d.findElement(By.linkText("All People"));
-            }
-        });
-                
-        // Bring up the All People form and then search for the user.
-        latestElem.click();
+        // Get the main list
+        Misc.getListPage(dadriver, "All People", siteStyle, logger);
 
         // Get the clear filters button
-        latestElem = dawait.until(new ExpectedCondition<WebElement>() {
+        WebDriverWait dawait = new WebDriverWait(dadriver, 30);
+        WebElement latestElem = dawait.until(new ExpectedCondition<WebElement>() {
             @Override public WebElement apply(WebDriver d) {
                 return d.findElement(By.className("clearFilters"));
             }
@@ -261,7 +270,7 @@ public class PersonHelper {
      */
     public static boolean verifyService(WebDriver dadriver, HashMap<String, String> userinfo, 
                                         String[] serviceorgname, String[] serviceorgtype, String[] serviceunitnumber, String[] servicedescription,
-                                        boolean hasservice, Logger logger) throws IOException {
+                                        boolean hasservice, String siteStyle, Logger logger) throws IOException {
 
         logger.info("PersonHelper::verifyService for {}", userinfo.get("username"));
         
@@ -282,8 +291,8 @@ public class PersonHelper {
         List <String> elemlist = new ArrayList <String>(Arrays.asList("email", "phone", "address1", "city", "state", "zip"));
         boolean retval = false;
         
-        // Bring up the All Service form and then search for the user.
-        dadriver.findElement(By.linkText("All Service")).click();
+        // Get the main list
+        Misc.getListPage(dadriver, "All Service", siteStyle, logger);
 
         // Get the clear filters button
         WebDriverWait dawait = new WebDriverWait(dadriver, 30);
@@ -357,12 +366,12 @@ public class PersonHelper {
     /**
      * @param args
      */
-    public static void addPerson(WebDriver dadriver, Map<String, String> userinfo, boolean newsletter, boolean active, Logger logger) throws IOException {
+    public static void addPerson(WebDriver dadriver, Map<String, String> userinfo, boolean newsletter, boolean active, String siteStyle, Logger logger) throws IOException {
 
         logger.info("PersonHelper::addPerson for {}", userinfo.get("username"));
 
-        // Bring up the All People form and then search for the user.
-        dadriver.findElement(By.linkText("All People")).click();
+        // Get the main list
+        Misc.getListPage(dadriver, "All People", siteStyle, logger);
 
         // Get the clear filters button
         WebDriverWait dawait = new WebDriverWait(dadriver, 30);
@@ -434,12 +443,12 @@ public class PersonHelper {
     /**
      * @param args
      */
-    public static void myProfile(WebDriver dadriver, Map<String, String> userinfo, boolean newsletter, Logger logger) throws IOException {
+    public static void myProfile(WebDriver dadriver, Map<String, String> userinfo, boolean newsletter, String siteStyle, Logger logger) throws IOException {
 
         logger.info("PersonHelper::myProfile for {}", userinfo.get("username"));
 
-        // Bring up the All People form and then search for the user.
-        dadriver.findElement(By.linkText("My Profile")).click();
+        // Get the main list
+        Misc.getListPage(dadriver, "My Profile", siteStyle, logger);
 
         // Wait for the form
         WebDriverWait dawait = new WebDriverWait(dadriver, 30);
@@ -480,26 +489,19 @@ public class PersonHelper {
     /**
      * @param args
      */
-    public static boolean editPerson(WebDriver dadriver, Map<String, String> userinfo, boolean newsletter, boolean active, boolean isjuser, Logger logger) throws IOException {
+    public static boolean editPerson(WebDriver dadriver, Map<String, String> userinfo, boolean newsletter, boolean active, boolean isjuser, String siteStyle, Logger logger) throws IOException {
 
         logger.info("PersonHelper::editPerson for {}", userinfo.get("username"));
 
         List <String> elemlist = new ArrayList <String>(Arrays.asList("phone", "address1", "city", "state", "zip"));
         boolean retval = true;
             
-        // Get the All People link.
-        WebDriverWait dawait = new WebDriverWait(dadriver, 30);
-        WebElement latestElem = dawait.until(new ExpectedCondition<WebElement>() {
-            @Override public WebElement apply(WebDriver d) {
-                return d.findElement(By.linkText("All People"));
-            }
-        });
-                
-        // Bring up the All People form and then search for the user.
-        latestElem.click();
+        // Get the main list
+        Misc.getListPage(dadriver, "All People", siteStyle, logger);
 
         // Get the clear filters button
-        latestElem = dawait.until(new ExpectedCondition<WebElement>() {
+        WebDriverWait dawait = new WebDriverWait(dadriver, 30);
+        WebElement latestElem = dawait.until(new ExpectedCondition<WebElement>() {
             @Override public WebElement apply(WebDriver d) {
                 return d.findElement(By.className("clearFilters"));
             }
